@@ -88,6 +88,14 @@
                     {{ __('Register') }}
                 </x-button>
             </div>
+            <div class="form-group">
+    <label for="role">Choose your role:</label>
+    <select name="role" class="form-control" id="role">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+    </select>
+</div>
+
         </form>
     </x-authentication-card>
 </x-guest-layout>

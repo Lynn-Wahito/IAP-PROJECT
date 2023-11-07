@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+use Laravel\Jetstream\Http\Controllers\Inertia\CurrentUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +31,9 @@ Route::middleware([
 });
 
 Route::get('/register', [RoleController::class, 'showRegistrationForm'])->name('register');
+
+Route::get('/user', [CurrentUserController::class,'showRegistrationForm'])->name('UserRegister');
+
+Route::get('/admin-dashboard', function () {
+    // Route accessible only to users with 'admin' role
+})->middleware('auth', 'role:admin');
