@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\Host\IndexController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +30,9 @@ Route::middleware([
 });
 
 Route::get('/register', [RoleController::class, 'showRegistrationForm'])->name('register');
+
+
+Route::middleware(['auth', 'role:host'])->name('host.')->prefix('host')->group(function () {
+    Route::get('/', [IndexController::class,'index'])->name('index');
+
+});
