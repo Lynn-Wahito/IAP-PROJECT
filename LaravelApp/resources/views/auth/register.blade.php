@@ -46,17 +46,17 @@
                 </select>
             </div>
 
-            <div class="mt-4" x-show="role_id == 1">
+            <div class="mt-4" x-show="role_id == 2">
                 <x-jet-label for="cutomer_address" value="{{ __('Customer_Address') }}" />
                 <x-jet-input id="customer_address" class="block w-full mt-1" type="text" :value="old('customer_address')" name="customer_address" />
             </div>
 
-            <div class="mt-4" x-show="role_id == 2">
+            <div class="mt-4" x-show="role_id == 1">
                 <x-jet-label for="host_address" value="{{ __('Host_Address') }}" />
                 <x-jet-input id="host_address" class="block w-full mt-1" type="text" :value="old('host_address')" name="host_address" />
             </div>
 
-            <div class="mt-4" x-show="role_id == 2">
+            <div class="mt-4" x-show="role_id == 1">
                 <x-jet-label for="businessName" value="{{ __('BusinessName') }}" />
                 <x-jet-input id="businessName" class="block w-full mt-1" type="text" :value="old('businessName')" name="businessName" />
             </div>
