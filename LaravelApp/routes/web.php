@@ -36,5 +36,6 @@ Route::get('/register', [RoleController::class, 'showRegistrationForm'])->name('
 Route::middleware(['auth', 'role:host'])->name('host.')->prefix('host')->group(function () {
     Route::get('/', [IndexController::class,'index'])->name('index');
     Route::get('/multi-step-form', [EventController::class, 'create'])->name('multi-step-form');
+    Route::resource('/manage-events', EventController::class);
 
 });
