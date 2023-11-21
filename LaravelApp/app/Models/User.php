@@ -20,7 +20,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasProfilePhoto;
     use HasTeams;
     use Notifiable;
-   // use TwoFactorAuthenticatable;
+    use TwoFactorAuthenticatable;
     use HasRoles;
 
     /**
