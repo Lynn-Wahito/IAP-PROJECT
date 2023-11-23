@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire;
 
 use Illuminate\Support\Facades\DB;
@@ -11,7 +12,7 @@ class EventCreator extends Component
 {
     use WithFileUploads;
 
-   
+
     public $event_name;
     public $description;
     public $event_dateTime;
@@ -35,26 +36,71 @@ class EventCreator extends Component
 
     public function render()
     {
-        
-        return view('livewire.event-creator');
+        return view('livewire.event-creator',[
+            'allowedSeatValues' => $this->calculateAllowedSeatValues(),
+        ]);
     }
-    public function mount() {
-        $this->currentStep = 1;
-      }
-      public function increaseStep() {
-          $this->resetErrorBag();
-          $this->validateData();
-          $this->currentStep++;
-          if ($this->currentStep > $this->totalSteps) {
-              $this->currentStep = $this->totalSteps;
-          }
-      }
-      public function decreaseStep() {
-          $this->resetErrorBag();
-          $this->currentStep--;   
-          if($this->currentStep < 1) {
-              $this->currentStep = 1;
-          }
-      }
-}
+    private function calculateAllowedSeatValues()
+    {
+        if ($this->persons_per_row) {
+            $minSeats = $this->persons_per_row;
+            $maxSeats = $minSeats * 10; 
 
+            return range($minSeats, $maxSeats, $minSeats);
+        }
+
+        return [];
+    }
+
+    
+    public function generateSeatingArrangement()
+{
+    $vipRows = $this->vip_seats ? max(1, ceil($this->vip_seats / $this->persons_per_row)) : 0;
+    $regularRows = $this->regular_seats ? max(1, ceil($this->regular_seats / $this->persons_per_row)) : 0;
+
+    $seatingArrangement = [];
+
+    for ($i = 1; $i <= $vipRows; $i++) {
+        $seatingArrangement[] = ['type' => 'VIP', 'row' => $i, 'seats' => $this->persons_per_row];
+    }
+
+    for ($i = 1; $i <= $regularRows; $i++) {
+        $seatingArrangement[] = ['type' => 'Regular', 'row' => $i, 'seats' => $this->persons_per_row];
+    }
+
+    return $seatingArrangement;
+}
+    public function mount()
+    {
+        $this->currentStep = 1;
+    }
+    public function increaseStep()
+    {
+        $this->resetErrorBag();
+        //$this->validateData();
+        $this->currentStep++;
+        if ($this->currentStep > $this->totalSteps) {
+            $this->currentStep = $this->totalSteps;
+        }
+    }
+    public function decreaseStep()
+    {
+        $this->resetErrorBag();
+        $this->currentStep--;
+        if ($this->currentStep < 1) {
+            $this->currentStep = 1;
+        }
+    }
+    public function forceUpdate()
+    {
+        $this->reset('vip_seats', 'regular_seats', 'vip_prices', 'regular_prices');
+        $this->seatingArrangementPreview = $this->generateSeatingArrangement();
+    }
+
+    public function updated($propertyName)
+    {
+        if ($propertyName == 'persons_per_row' || $propertyName == 'seat_type') {
+            $this->forceUpdate();
+        }
+    }
+}
