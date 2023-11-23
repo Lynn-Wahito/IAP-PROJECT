@@ -4,7 +4,7 @@
              
 
             <form wire:submit.prevent="" enctype="multipart/form-data" class="max-w-md p-6 mx-auto mt-8 bg-white rounded-md shadow-md">
-             
+                @if ($currentStep == 1)
                     <div class="p-4 mb-6 text-white bg-blue-500">
                         <p class="text-lg font-semibold">Event Details - Stage 1/3</p>
                     </div>
@@ -88,7 +88,8 @@
                         @error('template_path') <span class="text-red-500">{{ $message }}</span> @enderror
 
                     </div>
-                
+                @endif
+                @if ($currentStep == 2)
              
                    
                         <div class="p-4 mb-6 text-white bg-blue-500">
@@ -201,6 +202,8 @@
                                 />
                                 @error('regular_prices') <span class="text-red-500">{{ $message }}</span> @enderror
                             </div>
+                @endif
+                @if ($currentStep == 3)           
                       
                         
 
@@ -233,29 +236,34 @@
                             <span class="text-red-500">@error('terms'){{ $message }}@enderror</span>
                         </div>
                     </div>
+                @endif    
 
                     
                
                 
                 <div class="flex justify-between mt-8">
-                    
+                    @if ($currentStep == 1)
+                          <div></div>
+                    @endif
 
-                         {{-- <--<button type="button" class="w-full px-4 py-2 text-white bg-blue-500 rounded-full hover:bg-blue-700" wire:click="increaseStep()">Next</button> --}}
+                    @if ($currentStep == 1)
                         
-                   
+                            <button type="button" class="w-full px-4 py-2 text-white bg-blue-500 rounded-full hover:bg-blue-700" wire:click="increaseStep()">Next</button>
+                        
+                    @endif
 
 
-                  
+                    @if ($currentStep == 2 || $currentStep == 3)
                     <button type="button" class="px-4 py-2 text-white bg-gray-500 rounded-full hover:bg-gray-700" wire:click="decreaseStep()">Back</button>
-                   
+                    @endif
                     
-                   
+                    @if ($currentStep == 2)
                     <button type="button" class="px-4 py-2 text-white bg-blue-500 rounded-full hover:bg-blue-700" wire:click="increaseStep()">Next</button>
-                  
+                    @endif
 
-                   
+                    @if ($currentStep == 3)
                     <button type="submit" class="px-4 py-2 text-white bg-green-500 rounded-full hover:bg-green-700">Submit</button>
-                  
+                    @endif
 
                    
                 </div>
