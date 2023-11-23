@@ -6,7 +6,8 @@
             <form wire:submit.prevent="" enctype="multipart/form-data" class="max-w-md p-6 mx-auto mt-8 bg-white rounded-md shadow-md">
                 @if ($currentStep == 1)
                     <div class="p-4 mb-6 text-white bg-blue-500">
-                        <p class="text-lg font-semibold">Event Details - Stage 1/3</p>
+                        <p class="text-lg font-semibold">Event Details - Stage {{ $currentStep }}/ {{ $totalSteps}}
+                        </p>
                     </div>
 
                     <div class="mb-6">
@@ -93,7 +94,8 @@
              
                    
                         <div class="p-4 mb-6 text-white bg-blue-500">
-                            <p class="text-lg font-semibold">Seat Configuration - Stage 2/3</p>
+                            <p class="text-lg font-semibold">Seat Configuration - Stage {{ $currentStep }}/ {{ $totalSteps}}
+                            </p>
                         </div>
 
                         <div class="grid grid-cols-2 gap-6 mb-6">
@@ -130,78 +132,84 @@
                             </div>
                         </div>
                        
-                            <div class="mb-6">
-                                <label for="vip_seats" class="block text-sm font-medium text-gray-700">Number of VIP Tickets</label>
-                                <select
-                                    wire:model="vip_seats"
-                                    id="vip_seats"
-                                    name="vip_seats"
-                                    class="mt-1 p-2.5 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    required
-                                >
-                                @if($persons_per_row)
-                                    @foreach ($allowedSeatValues as $value)
-                                        <option value="{{ $value }}">{{ $value }}</option>
-                                    @endforeach
-                            
-                                @else
-                                    <option class="text-red-500" value="">Fill persons Per row field first and re-select the seat type</option>
-                                @endif
-                                </select>
-                                @error('vip_seats') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
+                        @if ($seat_type == 'Both' || $seat_type == 'VIP')
+                        <div class="mb-6">
+                            <label for="vip_seats" class="block text-sm font-medium text-gray-700">Number of VIP Tickets</label>
+                            <select
+                                wire:model="vip_seats"
+                                id="vip_seats"
+                                name="vip_seats"
+                                class="mt-1 p-2.5 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                required
+                            >
+                            @if($persons_per_row)
+                                @foreach ($allowedSeatValues as $value)
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                @endforeach
+                        
+                            @else
+                                <option class="text-red-500" value="">Fill persons Per row field first and re-select the seat type</option>
+                            @endif
+                            </select>
+                            @error('vip_seats') <span class="text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                    @endif
                          
 
                        
-                            <div class="mb-6">
-                                <label for="regular_seats" class="block text-sm font-medium text-gray-700">Number of Regular Tickets</label>
-                                <select
-                                    wire:model="regular_seats"
-                                    id="regular_seats"
-                                    name="regular_seats"
-                                    class="mt-1 p-2.5 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    required
-                                >   @if($persons_per_row)
-                                        @foreach ($allowedSeatValues as $value)
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        @endforeach
+                    @if ($seat_type == 'Both' || $seat_type == 'Regular')
+                    <div class="mb-6">
+                        <label for="regular_seats" class="block text-sm font-medium text-gray-700">Number of Regular Tickets</label>
+                        <select
+                            wire:model="regular_seats"
+                            id="regular_seats"
+                            name="regular_seats"
+                            class="mt-1 p-2.5 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            required
+                        >   @if($persons_per_row)
+                                @foreach ($allowedSeatValues as $value)
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                @endforeach
 
-                                        @else
-                                        <option class="text-red-500" value="">Fill persons Per row field first and re-select the seat type</option>
-                                    @endif
-                                </select>
-                                @error('regular_seats') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
+                                @else
+                                <option class="text-red-500" value="">Fill persons Per row field first and re-select the seat type</option>
+                            @endif
+                        </select>
+                        @error('regular_seats') <span class="text-red-500">{{ $message }}</span> @enderror
+                    </div>
+                @endif
                        
                        
-                            <div class="mb-6">
-                                <label for="vip_prices" class="block text-sm font-medium text-gray-700">VIP Ticket Price</label>
-                                <input
-                                    wire:model="vip_prices"
-                                    type="number"
-                                    id="vip_prices"
-                                    name="vip_prices"
-                                    min="1"
-                                    class="mt-1 p-2.5 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    required
-                                />
-                                @error('vip_prices') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                        
-                        
-                            <div class="mb-6">
-                                <label for="regular_prices" class="block text-sm font-medium text-gray-700">Regular Ticket Price</label>
-                                <input
-                                    wire:model="regular_prices"
-                                    type="number"
-                                    id="regular_prices"
-                                    name="regular_prices"
-                                    min="1"
-                                    class="mt-1 p-2.5 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    required
-                                />
-                                @error('regular_prices') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
+                @if($seat_type == 'Both' || $seat_type == 'VIP')
+                <div class="mb-6">
+                    <label for="vip_prices" class="block text-sm font-medium text-gray-700">VIP Ticket Price</label>
+                    <input
+                        wire:model="vip_prices"
+                        type="number"
+                        id="vip_prices"
+                        name="vip_prices"
+                        min="1"
+                        class="mt-1 p-2.5 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        required
+                    />
+                    @error('vip_prices') <span class="text-red-500">{{ $message }}</span> @enderror
+                </div>
+            @endif
+            @if($seat_type == 'Both' || $seat_type == 'Regular')
+                <div class="mb-6">
+                    <label for="regular_prices" class="block text-sm font-medium text-gray-700">Regular Ticket Price</label>
+                    <input
+                        wire:model="regular_prices"
+                        type="number"
+                        id="regular_prices"
+                        name="regular_prices"
+                        min="1"
+                        class="mt-1 p-2.5 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        required
+                    />
+                    @error('regular_prices') <span class="text-red-500">{{ $message }}</span> @enderror
+                </div>
+            @endif
                 @endif
                 @if ($currentStep == 3)           
                       
@@ -212,7 +220,8 @@
 
              
                      <div class="p-4 mb-6 text-white bg-green-500">
-                        <p class="text-lg font-semibold">Completion - Stage3/3</p>
+                        <p class="text-lg font-semibold">Completion - Stage {{ $currentStep }}/ {{ $totalSteps}}
+                        </p>
                     </div>
 
                     <div class="max-w-md p-6 mx-auto mt-8 bg-white rounded-md shadow-md">
