@@ -134,14 +134,16 @@ public function updated($propertyName)
         'regular_seats' => 'nullable|integer',
     ]);
 
-    // Add a condition to check if the user has the host role and has chosen both VIP and regular seats
-    $this->validate([
-        'regular_prices' => function ($attribute, $value, $fail) {
-            if ($value >= $this->vip_prices) {
-                $fail('The regular price must be less than the VIP price.');
-            }
-        },
-    ]);
+    if ($this->seat_type == 'Both') {
+        $this->validate([
+
+            'regular_prices' => function ($attribute, $value, $fail) {
+                if ($value >= $this->vip_prices) {
+                    $fail('The regular price must be less than the VIP price.');
+                }
+            },
+        ]);
+    }
 }
     }
 
