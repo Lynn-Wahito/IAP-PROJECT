@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Host;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\Event;
+use App\Models\Seat;
 
 class EventController extends Controller
 {
@@ -21,5 +23,13 @@ class EventController extends Controller
         ->get();
 
         return view ('host.manage-events.index', compact('events'));
+    }
+
+    public function edit(Request $request, Event $event) {
+        Event::find($event->id);
+       
+        
+    
+        return view('host.manage-events.edit', compact('event'));
     }
 }
