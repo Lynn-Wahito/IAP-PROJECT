@@ -67,11 +67,12 @@
 
 
 
-                               <form class="flex justify-end font-medium text-red-600 dark:text-red-500 hover:underline" method="POST" action="{{ route('host.manage-events.destroy', $event->id)}}" onsubmit="return confirm('Are you sure you want to delete ' .{{$event->event_name}}. '?');">
-                                @csrf
-                                @method("DELETE")
-                                <button type="submit">Delete </button>
-
+                               <form class="flex justify-end font-medium text-red-600 dark:text-red-500 hover:underline"
+                                    method="POST" action="{{ route('host.manage-events.destroy', $event->id) }}"
+                                    onsubmit="return confirm('Are you sure you want to delete {{ $event->event_name }}?');">
+                                    @csrf
+                                    @method("DELETE")
+                                    <button type="submit">Delete</button>
                                 </form>
 
                             </td>
