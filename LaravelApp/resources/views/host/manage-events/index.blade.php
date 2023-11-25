@@ -48,7 +48,7 @@
                                 {{ $event->event_name }}
                             </td>
                             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                            {{ $event->description }}
+                            {{ $event->truncateDescription() }}
                             </td>
                             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                             {{ $event->venue }}

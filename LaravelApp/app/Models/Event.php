@@ -69,4 +69,8 @@ class Event extends Model
     
         return trim($remainingTime);
     }
+
+    public function truncateDescription() {
+        return Str::words($this->description, 10, ' ... ');
+    }
 }
