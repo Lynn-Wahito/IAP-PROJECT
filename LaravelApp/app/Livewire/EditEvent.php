@@ -111,6 +111,51 @@ class EditEvent extends Component
             $this->currentStep = 1;
         }
     }
+
+    public function loadEventData() {
+        $this->event = Event::find($this->event_id);
+    
+        if ($this->event) {
+            $this->event_name = $this->event->event_name;
+            $this->description = $this->event->description;
+            $this->venue = $this->event->venue;
+
+            if ($this->event->event_datetime) {
+                
+
+                $this->date = $this->event->event_datetime->format('Y-m-d');
+                $this->time = $this->event->event_datetime->format('H:i');
+            }
+            
+            $this->template_path = $this->event->template_path;
+            $this->persons_per_row = $this->event->persons_per_row;
+
+            //Associating existing seats with the event
+            $existingSeats = Seat::where('event_id', $this->event_id)->pluck('seat_type')->toArray();
+
+            //Populating the seat_type field based on the seat types of the seats associated to the event
+            if(in_array('VIP', $existingSeats) && in_array('Regular', $existingSeats)){
+                $this->seat_type = "Both";
+            }elseif(in_array('VIP', $existingSeats)){
+                $this->seat_type = "VIP";
+            }elseif(in_array('Regular', $existingSeats)){
+                $this->seat_type = "Regular";
+            }else {
+                // Default to an empty value if no seats are found
+                $this->seat_type = '';
+            }
+           
+
+            $this->vip_seats = $this->event->vip_seats;
+            $this->regular_seats = $this->event->regular_seats;
+            $this->vip_prices = $this->event->vip_prices;
+            $this->regular_prices = $this->event->regular_prices;
+          
+            $this->seatingArrangementPreview = $this->generateSeatingArrangement();
+            
+            $this->forceUpdate(); // Refresh the seating arrangement preview
+        }
+    }
     
 
     
