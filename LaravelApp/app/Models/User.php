@@ -72,3 +72,5 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class, 'user_role', 'role_id', 'user_id');
     }
 }
+
+//Test commit
