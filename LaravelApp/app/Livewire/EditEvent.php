@@ -49,16 +49,21 @@ class EditEvent extends Component
 
     private function calculateAllowedSeatValues()
     {
-        if ($this->persons_per_row) {
+        if (!is_null($this->vip_seats) || !is_null($this->regular_seats)) {
+            // Use vip_seats or regular_seats if either one is set
+            $minSeats = max($this->persons_per_row, $this->vip_seats ?? 0, $this->regular_seats ?? 0);
+            $maxSeats = $minSeats * 10; // Default max value
+            // dd('Using vip_seats or regular_seats:', compact('minSeats', 'maxSeats'));
+        } else {
+            // Perform normal operations if both vip_seats and regular_seats are null
             $minSeats = $this->persons_per_row;
-            $maxSeats = $minSeats * 10; 
-
-            return range($minSeats, $maxSeats, $minSeats);
+            $maxSeats = $minSeats * 10; // Default max value
+            // dd('Normal operations:', compact('minSeats', 'maxSeats'));
         }
-
-        return [];
+    
+        return range($minSeats, $maxSeats, $minSeats);
     }
-
+    
 
 
 
@@ -110,7 +115,7 @@ class EditEvent extends Component
             $this->venue = $this->event->venue;
 
             if ($this->event->event_datetime) {
-               
+                // dd($this->event->event_datetime);
 
                 $this->date = $this->event->event_datetime->format('Y-m-d');
                 $this->time = $this->event->event_datetime->format('H:i');
@@ -133,13 +138,15 @@ class EditEvent extends Component
                 // Default to an empty value if no seats are found
                 $this->seat_type = '';
             }
-         
+            // dd($this->seat_type);
+            // dd($this->event->vip_seats);
 
             $this->vip_seats = $this->event->vip_seats;
             $this->regular_seats = $this->event->regular_seats;
             $this->vip_prices = $this->event->vip_prices;
             $this->regular_prices = $this->event->regular_prices;
-            
+            // dd([$this->event->vip_seats,
+            // $this->vip_prices]);
             $this->seatingArrangementPreview = $this->generateSeatingArrangement();
             
             $this->forceUpdate(); // Refresh the seating arrangement preview
@@ -227,7 +234,11 @@ class EditEvent extends Component
                     $templatePath = $event->template_path;
                 }
     
-               
+                // Check and update null fields
+                $this->vip_seats = is_null($this->vip_seats) ? $event->vip_seats : $this->vip_seats;
+                $this->regular_seats = is_null($this->regular_seats) ? $event->regular_seats : $this->regular_seats;
+                $this->vip_prices = is_null($this->vip_prices) ? $event->vip_prices : $this->vip_prices;
+                $this->regular_prices = is_null($this->regular_prices) ? $event->regular_prices : $this->regular_prices;
     
                 $event->update([
                     'user_id' => auth()->id(),
