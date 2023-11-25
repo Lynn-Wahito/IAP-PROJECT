@@ -59,6 +59,9 @@ class EditEvent extends Component
         return [];
     }
 
+
+
+
     public function generateSeatingArrangement()
     {
         $vipRows = $this->vip_seats ? max(1, ceil($this->vip_seats / $this->persons_per_row)) : 0;
@@ -94,23 +97,9 @@ class EditEvent extends Component
         // dd($event_id);
         $this->currentStep = 1;
         $this->event_id = $event_id;
+        $this->loadEventData();
     }
-
-    public function increaseStep() {
-        $this->resetErrorBag();
-        // $this->validateData();
-        $this->currentStep++;
-        if ($this->currentStep > $this->totalSteps) {
-            $this->currentStep = $this->totalSteps;
-        }
-    }
-    public function decreaseStep() {
-        $this->resetErrorBag();
-        $this->currentStep--;   
-        if($this->currentStep < 1) {
-            $this->currentStep = 1;
-        }
-    }
+    
 
     public function loadEventData() {
         $this->event = Event::find($this->event_id);
@@ -121,7 +110,7 @@ class EditEvent extends Component
             $this->venue = $this->event->venue;
 
             if ($this->event->event_datetime) {
-                
+               
 
                 $this->date = $this->event->event_datetime->format('Y-m-d');
                 $this->time = $this->event->event_datetime->format('H:i');
@@ -144,19 +133,160 @@ class EditEvent extends Component
                 // Default to an empty value if no seats are found
                 $this->seat_type = '';
             }
-           
+         
 
             $this->vip_seats = $this->event->vip_seats;
             $this->regular_seats = $this->event->regular_seats;
             $this->vip_prices = $this->event->vip_prices;
             $this->regular_prices = $this->event->regular_prices;
-          
+            
             $this->seatingArrangementPreview = $this->generateSeatingArrangement();
             
             $this->forceUpdate(); // Refresh the seating arrangement preview
         }
     }
     
+    public function increaseStep() {
+        $this->resetErrorBag();
+        $this->validateData();
+        $this->currentStep++;
+        if ($this->currentStep > $this->totalSteps) {
+            $this->currentStep = $this->totalSteps;
+        }
+    }
+    public function decreaseStep() {
+        $this->resetErrorBag();
+        $this->currentStep--;   
+        if($this->currentStep < 1) {
+            $this->currentStep = 1;
+        }
+    }
+
+    public function validateData() {
+        if($this->currentStep == 1) {
+            $this->validate([
+                'event_name' => 'required',
+                'venue'=> 'required',
+                'date' => 'required|date|after:',
+                'time' => 'required|date_format:H:i',
+                'description'=> 'required',
+                'template_path' => 'nullable|sometimes|image|mimes:jpg,png,webp,jpeg|max:2000',
+
+            ]);
+        }
+        elseif($this->currentStep == 2) {
+            $this->validate([
+                'persons_per_row'=> 'required|integer|min:4|max:10',
+                'seat_type'=> 'required',
+                'regular_prices' => 'nullable|integer|min:50',
+                'vip_prices'=> 'nullable|integer|min:100',
+                'vip_seats' => 'nullable|integer',
+                'regular_seats' => 'nullable|integer',
+                
+            ]);
+
+            if($this->vip_prices > 0 ){
+                $this->validate([
+                    
+                    'regular_prices' => function ($attribute, $value, $fail) {
+                        if ($value >= $this->vip_prices) {
+                            $fail('The regular price must be less than the VIP price.');
+                        }
+                    },
+                
+                ]);
+            }
+            
+        }
+        
+    }
+
+    public function updateEvent()
+    {
+        $this->resetErrorBag();
+    
+        if ($this->currentStep == 3) {
+            $this->validate([
+                'terms' => 'accepted',
+            ]);
+    
+            $templatePath = null;
+    
+            DB::beginTransaction();
+    
+            try {
+                $event = Event::find($this->event_id);
+    
+                if ($this->template_path) {
+                    if ($event->template_path) {
+                        Storage::disk('public')->delete($event->template_path);
+                    }
+                    $templatePath = $this->template_path->store('event_templates', 'public');
+                } else {
+                    // If no new template is provided, retain the existing template path
+                    $templatePath = $event->template_path;
+                }
+    
+               
+    
+                $event->update([
+                    'user_id' => auth()->id(),
+                    'event_name' => $this->event_name,
+                    'description' => $this->description,
+                    'event_datetime' => $this->date . ' ' . $this->time,
+                    'venue' => $this->venue,
+                    'template_path' => $templatePath,
+                    'persons_per_row' => $this->persons_per_row,
+                    'vip_seats' => $this->vip_seats ?? 0,
+                    'regular_seats' => $this->regular_seats ?? 0,
+                    'vip_prices' => $this->vip_prices ?? 0,
+                    'regular_prices' => $this->regular_prices ?? 0,
+                ]);
+
+                //Update or create seats
+                $seats = Seat::where('event_id', $event->id)->get();
+
+    
+                foreach ($this->generateSeatingArrangement() as $row) {
+                    for ($seat = 1; $seat <= $row['seats']; $seat++) {
+                        $seatData = [
+                            'event_id' => $event->id,
+                            'row_number' => $row['row'],
+                            'seat_number' => $seat,
+                            'seat_type' => $row['type'],
+                            'status' => 'available', //default status
+                        ];
+                
+                        // Find the existing seat or create a new one
+                        $existingSeat = $seats
+                            ->where('row_number', $row['row'])
+                            ->where('seat_number', $seat)
+                            ->where('seat_type', $row['type'])
+                            ->first();
+                
+                        if ($existingSeat) {
+                            // Update seatData['status'] with the status of the existing seat
+                            $seatData['status'] = $existingSeat->status;
+                            $existingSeat->update($seatData); // Update the existing seat
+                        } else {
+                            // Create a new seat
+                            Seat::create($seatData);
+                        }
+                    }
+                }
+                
+    
+                DB::commit();
+                return redirect()->route("host.index")->with('message', 'Event updated successfully!');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                $this->addError('general', 'Error creating event and seats. Please try again.');
+                dd('Error: ' . $e->getMessage());
+            }
+        }
+        
+    }
+
 
     
 }
