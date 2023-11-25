@@ -37,6 +37,7 @@ class EventCreator extends Component
     public $currentStep = 1;
     public $eventData = [];
     
+    
     public function render()
     {
         return view('livewire.event-creator',[
@@ -123,27 +124,25 @@ public function updated($propertyName)
 
             ]);
         }
-        elseif($this->currentStep == 2) {
-            $this->validate([
-                'persons_per_row'=> 'required|integer|min:4|max:10',
-                'seat_type'=> 'required',
-                'regular_prices' => 'nullable|integer|min:50',
-                'vip_prices'=> 'nullable|integer|min:100',
-                'vip_seats' => 'nullable|integer',
-                'regular_seats' => 'nullable|integer',
-                
-            ]);
+    elseif ($this->currentStep == 2) {
+    $this->validate([
+        'persons_per_row' => 'required|integer|min:4|max:10',
+        'seat_type' => 'required',
+        'regular_prices' => 'nullable|integer|min:50',
+        'vip_prices' => 'nullable|integer|min:100',
+        'vip_seats' => 'nullable|integer',
+        'regular_seats' => 'nullable|integer',
+    ]);
 
-            $this->validate([
-                'regular_prices' => function ($attribute, $value, $fail) {
-                    if ($value >= $this->vip_prices) {
-                        $fail('The regular price must be less than the VIP price.');
-                    }
-                },
-            ]);
-            
-        }
-        
+    // Add a condition to check if the user has the host role and has chosen both VIP and regular seats
+    $this->validate([
+        'regular_prices' => function ($attribute, $value, $fail) {
+            if ($value >= $this->vip_prices) {
+                $fail('The regular price must be less than the VIP price.');
+            }
+        },
+    ]);
+}
     }
 
    
@@ -207,3 +206,32 @@ public function updated($propertyName)
     }
     
 }
+
+    // // Method to handle advancing to the next stage
+    // public function nextStage($data)
+    // {
+      
+    //     $this->validateAndStoreData($data);
+
+    //     $this->currentStage++;
+    //     dd($this->currentStage);
+    // }
+    // // public function nextStage1($data)
+    // // {
+    // //     $this->validateAndStoreData($data);
+    // //     $this->currentStage++;
+
+    // //     return redirect()->route('host.livewire.stage2-form');
+    // // }
+
+    // // Method to validate and store data for the current stage
+    // private function validateAndStoreData($data)
+    // {
+    //     // Add validation logic based on the current stage if needed
+
+    //     // Store the data for the current stage
+    //     $this->eventData[$this->currentStage] = $data;
+    // }
+
+    
+
