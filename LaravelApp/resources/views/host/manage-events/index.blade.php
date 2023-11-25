@@ -59,7 +59,9 @@
                             </td>
                             <td class="flex justify-between grid-cols-2 px-6 py-4">
                            
-                            <a href="#" class="flex justify-end font-medium text-blue-600 dark:text-blue-500 hover:underline ">Edit</a>
+                            <a href="{{ route('host.manage-events.edit', $event->id) }}" 
+                                class="px-2 font-medium text-blue-600 dark:text-blue-500 hover:underline" 
+                                wire:click.prevent="$emitTo('edit-event', 'mount', {{ $event->id }}, 'event_id')">Edit</a>
 
                                <!-- <a href="#" class="flex justify-end font-medium text-red-600 dark:text-red-500 hover:underline ">Remove</a> -->
 
