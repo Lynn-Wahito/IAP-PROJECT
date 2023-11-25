@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\Host\EventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +31,15 @@ Route::middleware([
 });
 
 Route::get('/register', [RoleController::class, 'showRegistrationForm'])->name('register');
+
+
+Route::middleware(['auth', 'role:host'])->name('host.')->prefix('host')->group(function () {
+    Route::get('/', [IndexController::class,'index'])->name('index');
+    Route::get('/multi-step-form', [EventController::class, 'create'])->name('multi-step-form');
+    Route::resource('/manage-events', EventController::class);
+
+});
+Route::middleware(['auth', 'role:customer'])->name('customer.')->prefix('customer')->group(function () {
+    Route::get('/', [IndexController::class,'customerIndex'])->name('customerIndex');
+
+});

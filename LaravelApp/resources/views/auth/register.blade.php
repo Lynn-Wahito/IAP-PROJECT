@@ -38,30 +38,29 @@
             <div class="mt-4">
                 <x-jet-label for="role_id" value="{{ __('Register as:') }}" />
                 <select name="role_id" x-model="role_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    @foreach ($roles as $role)
                 <option value="">---select a role to register with ---</option>
-                    <option value="{{ $role->id}}">{{ $role->name}}</option>
+                    @foreach ($roles as $role)
+                    <option value="{{ $role->id}}">{{ $role->name }}</option>
                     <!-- <option value="2">Host</option> -->
                     @endforeach
                 </select>
             </div>
 
-            <div class="mt-4" x-show="role_id == 4">
+            <div class="mt-4" x-show="role_id == 2">
                 <x-jet-label for="cutomer_address" value="{{ __('Customer_Address') }}" />
                 <x-jet-input id="customer_address" class="block w-full mt-1" type="text" :value="old('customer_address')" name="customer_address" />
             </div>
 
-            <div class="mt-4" x-show="role_id == 3">
+            <div class="mt-4" x-show="role_id == 1">
                 <x-jet-label for="host_address" value="{{ __('Host_Address') }}" />
                 <x-jet-input id="host_address" class="block w-full mt-1" type="text" :value="old('host_address')" name="host_address" />
             </div>
 
-            <div class="mt-4" x-show="role_id == 3">
+            <div class="mt-4" x-show="role_id == 1">
                 <x-jet-label for="businessName" value="{{ __('BusinessName') }}" />
                 <x-jet-input id="businessName" class="block w-full mt-1" type="text" :value="old('businessName')" name="businessName" />
             </div>
-
-
+            
             @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
                 <div class="mt-4">
                     <x-label for="terms">
