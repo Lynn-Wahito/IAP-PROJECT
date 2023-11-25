@@ -38,6 +38,7 @@ Route::middleware(['auth', 'role:host'])->name('host.')->prefix('host')->group(f
     Route::get('/multi-step-form', [EventController::class, 'create'])->name('multi-step-form');
     Route::resource('/manage-events', EventController::class);
     Route::get('/manage-events/edit/{event}', [EventController::class, 'edit'])->name('manage-events.edit');
+    Route::delete('/manage-events/events/{event}', [EventController::class, 'destroy'])->name('manage-events.destroy');
 
 });
 Route::middleware(['auth', 'role:customer'])->name('customer.')->prefix('customer')->group(function () {
