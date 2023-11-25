@@ -55,7 +55,7 @@
                             </td>
                             
                             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                            {{ $event->event_datetime }}
+                            {{ $event->calculateRemainingTime() }}
                             </td>
                             <td class="flex justify-between grid-cols-2 px-6 py-4">
                            

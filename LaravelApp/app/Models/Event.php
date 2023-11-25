@@ -44,4 +44,29 @@ class Event extends Model
     {
         return $this->hasMany(Seat::class);
     }
+
+    public function calculateRemainingTime()
+    {
+        $eventDateTime = Carbon::parse($this->event_datetime);
+        $currentTime = Carbon::now();
+    
+        // Calculating the difference in terms of days, hours, and minutes
+        $diff = $eventDateTime->diff($currentTime);
+    
+        $remainingTime = '';
+    
+        if ($diff->d > 0) {
+            $remainingTime .= $diff->d . ' days ';
+        }
+    
+        if ($diff->h > 0) {
+            $remainingTime .= $diff->h . ' hours ';
+        }
+    
+        if ($diff->i > 0) {
+            $remainingTime .= $diff->i . ' minutes ';
+        }
+    
+        return trim($remainingTime);
+    }
 }
