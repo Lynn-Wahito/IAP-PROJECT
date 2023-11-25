@@ -70,3 +70,5 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
 }
+
+//Test commit
