@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\Host\EventController;
+use App\Http\Controllers\Customer\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,5 +44,6 @@ Route::middleware(['auth', 'role:host'])->name('host.')->prefix('host')->group(f
 });
 Route::middleware(['auth', 'role:customer'])->name('customer.')->prefix('customer')->group(function () {
     Route::get('/', [IndexController::class,'customerIndex'])->name('customerIndex');
+    Route::get('/customerHistory', [CustomerController::class,'history'])->name('history');
 
 });
