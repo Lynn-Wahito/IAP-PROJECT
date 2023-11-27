@@ -175,3 +175,143 @@
         Checkout
     </button>
 </div>
+
+
+
+    
+    @push('scripts')
+    
+        <script>
+           
+            function clearCart() {
+                    // Call Livewire method to clear the cart
+                    @this.call('clearCart');
+
+                    // Reset the seat colors
+                    resetSeatColor();
+                }
+
+                function resetSeatColor() {
+                    // Get all seat elements
+                    var seatElements = document.querySelectorAll('[id^="vip-seat-"], [id^="reg-seat-"]');
+
+                    // Reset the color of each seat element
+                    seatElements.forEach(function (seatElement) {
+                if (seatElement.classList.contains('text-yellow-500')) {
+                    seatElement.classList.remove('text-yellow-500');
+                    if (seatElement.id.startsWith('vip-seat-')) {
+                        seatElement.classList.add('text-blue-500');
+                    } else {
+                        seatElement.classList.add('text-green-500');
+                    }
+                }
+
+                    document.addEventListener('livewire:load', function () {
+                        Livewire.on('updateCart', function (data) {
+                            // Handle the updated cart data
+                            updateCart(data);
+                        });
+
+                          Livewire.on('updateSessionData', function () {
+                            window.livewire.emit('setSessionData');
+                        });
+
+                        Livewire.hook('message.processed', (message, component) => {
+                            if (message.updateQueue && message.updateQueue.some(update => update.method == 'updated')) {
+                                window.livewire.emit('updateSessionData');
+                            }
+                        });
+                    }
+                }
+        
+
+                function updateCart(cart) {
+                    // Clear the existing cart view
+                    var cartView = document.getElementById('cart-view');
+                    cartView.innerHTML = '';
+
+                    // Add selected seats to the cart view
+                    cart.forEach(function (item) {
+                        var seatLabel = item['seat_label'];
+                        var price = item['price'];
+
+                        // Create a new cart item element
+                        var cartItem = document.createElement('div');
+                        cartItem.className = 'flex justify-between items-center';
+                        cartItem.innerHTML = '<p class="text-sm">' + seatLabel + '</p>' +
+                            '<p class="text-sm">$' + price + '</p>';
+
+                        // Append the cart item to the cart view
+                        cartView.appendChild(cartItem);
+                    });
+
+                    // Update the total price
+                    var totalPrice = document.getElementById('total-price');
+                    var totalAmount = cart.reduce(function (total, item) {
+                        return total + item['price'];
+                    }, 0);
+                    totalPrice.innerHTML = '$' + totalAmount;
+
+                }
+
+                Livewire.on('updateBookingSummary', function (data) {
+                    // Handle the updated booking summary data
+                    updateBookingSummary(data);
+                });
+
+                function updateBookingSummary(data) {
+                    @this.call('updateBookingSummary');
+                    // Clear the existing booking summary view
+                    var bookingSummaryView = document.getElementById('banner');
+                    bookingSummaryView.innerHTML = '';
+
+                    // Add cart data to the booking summary view
+                    data['cart'].forEach(function (item) {
+                    var seatLabel = item['seat_label'];
+                    var price = item['price'];
+
+                    // Create a new booking summary item element
+                    var bookingSummaryItem = document.createElement('div');
+                    bookingSummaryItem.className = 'flex items-center justify-between';
+                    bookingSummaryItem.innerHTML = '<p class="text-sm">' + seatLabel + '</p>' +
+                        '<p class="text-sm">$' + price + '</p>';
+
+                        // Append the booking summary item to the booking summary view
+                    bookingSummaryView.appendChild(bookingSummaryItem);
+                    });
+
+                    // Update the total price
+                    var totalPrice = document.createElement('div');
+                    totalPrice.className = 'flex items-center justify-between mt-4';
+                    totalPrice.innerHTML = '<p class="text-lg font-bold">Total:</p>' +
+                        '<p class="text-lg font-bold">$' +
+                        data['cart'].reduce(function (total, item) {
+                            return total + item['price'];
+                        }, 0) +
+                        '</p>';
+                    bookingSummaryView.appendChild(totalPrice);
+
+                    // Show the banner
+                    showBanner();
+                }
+
+
+
+            
+            });
+
+
+    
+        
+        </script>
+
+        
+    @endpush
+    
+    
+    
+
+</div>
+
+
+

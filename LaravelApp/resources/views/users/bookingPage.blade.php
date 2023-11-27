@@ -23,6 +23,26 @@
         
       
 
+        <style>
+        /* Styles for the floating banner */
+        .floating-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            transform: translateY(100%); /* Initially hidden below the viewport */
+            transition: transform 10s ease-in-out;
+        }
+
+        /* Animation to slide the banner into view */
+        .floating-banner.active {
+            transform: translateY(0);
+        }
+    </style>
     </head>
     <body class="font-sans antialiased">
     <div class="container">
@@ -35,6 +55,41 @@
    </div>
 
         @livewireScripts
+
+                <script>
+   var bannerTimeout;
+
+function showBanner() {
+    // Clear any existing timeout to ensure multiple clicks don't overlap
+    clearTimeout(bannerTimeout);
+
+    // Show the banner
+    document.getElementById('banner').style.transform = 'translateY(0)';
+
+    // Set a timeout to automatically hide the banner after 10 minutes (600000 milliseconds)
+    bannerTimeout = setTimeout(hideBanner, 600000);
+}
+
+function hideBanner() {
+    // Hide the banner
+    document.getElementById('banner').style.transform = 'translateY(100%)';
+
+    // Clear the timeout
+    clearTimeout(bannerTimeout);
+}
+
+
+    function goToPaymentPage() {
+        clearTimeout(bannerTimeout);
+
+        // Redirect to the payments page
+        window.location.href = '/payments';
+    }
+</script>
+
+
+
+
 
        
     </body>
