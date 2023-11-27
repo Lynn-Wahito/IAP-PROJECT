@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\Host\EventController;
@@ -47,3 +48,5 @@ Route::middleware(['auth', 'role:customer'])->name('customer.')->prefix('custome
     Route::get('/customerHistory', [CustomerController::class,'history'])->name('history');
 
 });
+
+Route::get("/", [TemplateController::class,"index"]);
