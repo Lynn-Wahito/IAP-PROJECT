@@ -4,7 +4,7 @@
         <div class="w-full overflow-hidden bg-white shadow-xl sm:rounded-lg">
              
 
-            <form wire:submit.prevent="register" enctype="multipart/form-data" class="max-w-md p-6 mx-auto mt-8 bg-white rounded-md shadow-md">
+            <form wire:submit.prevent="updateEvent" enctype="multipart/form-data" class="max-w-md p-6 mx-auto mt-8 bg-white rounded-md shadow-md">
                 @if ($currentStep == 1)
                     <div class="p-4 mb-6 text-white bg-blue-500">
                         <p class="text-lg font-semibold">Event Details - Stage {{ $currentStep }}/ {{ $totalSteps}}</p>
@@ -81,7 +81,7 @@
                         <input
                             wire:model="template_path"
                             type="file"
-                            accept="image/png, template_path/jpeg, template_path/jpg, template_path/webp"
+                            accept="image/png, image/jpeg, image/jpg, image/webp"
                             id="template_path"
                             name="template_path"
                             class="mt-1 p-2.5 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -130,6 +130,7 @@
                                 </select>
                                 @error('seat_type') <span class="text-red-500">{{ $message }}</span> @enderror
                             </div>
+                          
                         </div>
                         @if ($seat_type == 'Both' || $seat_type == 'VIP')
                             <div class="mb-6">
@@ -142,6 +143,7 @@
                                     required
                                 >
                                 @if($persons_per_row)
+                                
                                     @foreach ($allowedSeatValues as $value)
                                         <option value="{{ $value }}">{{ $value }}</option>
                                     @endforeach
@@ -163,7 +165,7 @@
                                     name="regular_seats"
                                     class="mt-1 p-2.5 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                     required
-                                >   @if($persons_per_row)
+                                >   @if($persons_per_row || request()->routeIs(['edit-event.regular_seats']))
                                         @foreach ($allowedSeatValues as $value)
                                             <option value="{{ $value }}">{{ $value }}</option>
                                         @endforeach
@@ -276,7 +278,7 @@
                     @endif
 
                     @if ($currentStep == 3)
-                    <button type="submit" class="px-4 py-2 text-white bg-green-500 rounded-full hover:bg-green-700">Submit</button>
+                    <button type="submit" class="px-4 py-2 text-white bg-green-500 rounded-full hover:bg-green-700">Update</button>
                     @endif
 
                    

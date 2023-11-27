@@ -33,7 +33,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'email', 
         'phone_no', 
         'password',
-        // 'role_id',
         'customer_address',
         'host_address',
         'businessName',
@@ -69,4 +68,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_url',
     ];
 
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    // public function roles()
+    // {
+    //     return $this->belongsToMany(Role::class, 'user_role', 'role_id', 'user_id');
+    // }
 }
